@@ -21,13 +21,14 @@
 </head>
 <body>
   <!-- Display the PDF file -->
+  <h3>Embedded PDF Viewer</h3>
   <div id="pdf-viewer-container">
     <div id="pdf-viewer"></div>
   </div>
 
   <script>
     // PDF file URL
-    var url = "http://localhost:8000/attn.pdf";
+    var url = "http://127.0.0.1:32100/attn.pdf";
 
     // Load the PDF file using pdf.js
     pdfjsLib.getDocument(url).promise.then(function(pdf) {
