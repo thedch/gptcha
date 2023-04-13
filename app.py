@@ -20,15 +20,7 @@ def main():
     st.write('Finished', base64_pdf[:100])
 
 def try_html():
-    st.title('PDF Reader')
-    with open('./attn-small.pdf', "rb") as f:
-        base64_pdf = base64.b64encode(f.read()).decode('utf-8')
-
-    # pdf_embed = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="400" height="1000" type="application/pdf"></iframe>'
-    pdf_embed = f'<embed src="data:application/pdf;base64,{base64_pdf}" width="700" height="1000" type="application/pdf">'
-
-    components.html(pdf_embed)
-    st.write('Finished', base64_pdf[:100])
+    components.iframe("http://localhost:8000", width= 800, height=800, scrolling=True)
 
 def try_custom_component():
     from frontend import component_zero
@@ -51,13 +43,8 @@ def try_custom_component():
 
     handle_event(run_component(props))
 
-def try_gpt4_custom_component():
-    from pdf_component import pdf_component
-    pdf_path = "attn-small.pdf"
-    pdf_component(pdf_path)
-
 if __name__ == '__main__':
     # main()
-    # try_html()
-    try_custom_component()
+    try_html()
+    # try_custom_component()
     # try_gpt4_custom_component()
