@@ -22,9 +22,11 @@ def main():
 
 @st.cache_data
 def run_server():
+    st.write('Running server...')
     print('Starting...')
     import os
     os.system('python frontend/myserver.py &')
+    st.write('Server started')
     print('Returning...')
 
 
@@ -35,6 +37,7 @@ def try_html():
     st.write('Iframe Begin')
     components.iframe("http://localhost:8000/frontend", width= 800, height=800, scrolling=True)
     st.write('Iframe End')
+
 
 def try_custom_component():
     from frontend import component_zero
