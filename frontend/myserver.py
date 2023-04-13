@@ -11,4 +11,3 @@ class CORSRequestHandler(http.server.SimpleHTTPRequestHandler):
 with socketserver.TCPServer(("", PORT), CORSRequestHandler) as httpd:
     print(f"Serving on http://localhost:{PORT}")
     httpd.serve_forever()
-

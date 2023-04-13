@@ -19,8 +19,22 @@ def main():
     st.markdown(pdf_embed, unsafe_allow_html=True)
     st.write('Finished', base64_pdf[:100])
 
+
+@st.cache_data
+def run_server():
+    print('Starting...')
+    import os
+    os.system('python frontend/myserver.py &')
+    print('Returning...')
+
+
 def try_html():
-    components.iframe("http://localhost:8000", width= 800, height=800, scrolling=True)
+    st.write('Hmmm')
+    run_server()
+
+    st.write('Iframe Begin')
+    components.iframe("http://localhost:8000/frontend", width= 800, height=800, scrolling=True)
+    st.write('Iframe End')
 
 def try_custom_component():
     from frontend import component_zero
