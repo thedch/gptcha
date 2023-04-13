@@ -26,11 +26,9 @@
   <body>
 
     <!-- Set up your HTML here -->
-    <h1>Component :D </h1>
-    <!-- <object data="./attn-small.pdf" type="application/pdf" width="100%" height="500px">
-        <p>Unable to display PDF file. <a href="google.com">Download</a> instead.</p>
-    </object> -->
-    <!-- <embed src="attn-small.pdf" width="800px" height="2100px" /> -->
+    <title>PDF Viewer using pdf.js</title>
+    <!-- Include the pdf.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
 
     <div>
       <input id="text_input" value="" placeholder="Enter some text"/>
@@ -38,6 +36,32 @@
     <div id="message_div">
       <br/><span id="message_label">__</span>
     </div>
+
+    <div id="pdf-viewer"></div>
+
+    <script>
+      // PDF file URL
+      var url = "attn-small.pdf";
+
+      // Load the PDF file using pdf.js
+      pdfjsLib.getDocument(url).promise.then(function(pdf) {
+        // Get the first page of the PDF file
+        pdf.getPage(1).then(function(page) {
+          // Set the viewport scale based on the page width and the desired width of the viewer
+          var viewport = page.getViewport({scale: 1});
+
+          // Prepare the canvas element for rendering
+          var canvas = document.createElement('canvas');
+          var context = canvas.getContext('2d');
+          canvas.height = viewport.height;
+          canvas.width = viewport.width;
+          document.getElementById('pdf-viewer').appendChild(canvas);
+
+          // Render the PDF page on the canvas
+          page.render({canvasContext: context, viewport: viewport});
+        });
+      });
+    </script>
 
     <script>
       // ----------------------------------------------------
@@ -73,7 +97,6 @@
       }
 
       function initialize(pipeline) {
-
         // Hook Streamlit's message events into a simple dispatcher of pipeline handlers
         window.addEventListener("message", (event) => {
           if (event.data.type == RENDER) {
@@ -93,13 +116,10 @@
             setFrameHeight(document.documentElement.clientHeight)
           }, 0)
         })
-
-        // Optionally, if auto-height computation fails, you can manually set it
-        // (uncomment below)
-        //setFrameHeight(200)
       }
 
       function setFrameHeight(height) {
+        height = Math.min(height, 500)
         _sendMessage(SET_FRAME_HEIGHT, {height: height})
       }
 
