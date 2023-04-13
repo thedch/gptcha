@@ -1,38 +1,71 @@
 <!-- See: https://discuss.streamlit.io/t/code-snippet-create-components-without-any-frontend-tooling-no-react-babel-webpack-etc/13064 -->
 
+<!DOCTYPE html>
 <html>
-<body>
-
-  <!-- Set up your HTML here -->
+<head>
+  <meta charset="UTF-8">
   <title>PDF Viewer using pdf.js</title>
   <!-- Include the pdf.js library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+  <style>
+    /* Set the height of the PDF viewer container */
+    #pdf-viewer-container {
+      height: 600px; /* adjust as needed */
+    }
 
-  <div id="pdf-viewer"></div>
+    /* Add scrolling to the PDF viewer container */
+    #pdf-viewer {
+      overflow: auto;
+    }
+  </style>
+</head>
+<body>
+  <!-- Display the PDF file -->
+  <div id="pdf-viewer-container">
+    <div id="pdf-viewer"></div>
+  </div>
 
   <script>
     // PDF file URL
-    var url = "http://localhost:8000/attn-small.pdf";
+    var url = "http://localhost:8000/attn.pdf";
 
     // Load the PDF file using pdf.js
     pdfjsLib.getDocument(url).promise.then(function(pdf) {
-      // Get the first page of the PDF file
-      pdf.getPage(1).then(function(page) {
-        // Set the viewport scale based on the page width and the desired width of the viewer
-        var viewport = page.getViewport({scale: 1});
+      // Get the total number of pages in the PDF file
+      var numPages = pdf.numPages;
 
-        // Prepare the canvas element for rendering
-        var canvas = document.createElement('canvas');
-        var context = canvas.getContext('2d');
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
-        document.getElementById('pdf-viewer').appendChild(canvas);
+      // Render all the pages of the PDF file
+      var renderPage = function(pageNumber) {
+        pdf.getPage(pageNumber).then(function(page) {
+          var viewport = page.getViewport({scale: 1});
+          var canvas = document.createElement('canvas');
+          var context = canvas.getContext('2d');
+          canvas.height = viewport.height;
+          canvas.width = viewport.width;
+          document.getElementById('pdf-viewer').appendChild(canvas);
+          page.render({canvasContext: context, viewport: viewport});
+        });
+      };
 
-        // Render the PDF page on the canvas
-        page.render({canvasContext: context, viewport: viewport});
+      for (var i = 1; i <= numPages; i++) {
+        renderPage(i);
+      }
+
+      // Add event listeners to handle scrolling through the pages
+      var currentPage = 1;
+      var container = document.getElementById('pdf-viewer-container');
+      container.addEventListener('scroll', function() {
+        var pages = document.querySelectorAll('#pdf-viewer canvas');
+        var visiblePage = Math.floor(container.scrollTop / pages[0].offsetHeight) + 1;
+        if (visiblePage !== currentPage) {
+          currentPage = visiblePage;
+          pages.forEach(function(page) {
+            page.style.display = 'none';
+          });
+          pages[currentPage - 1].style.display = 'block';
+        }
       });
     });
   </script>
-
 </body>
 </html>
